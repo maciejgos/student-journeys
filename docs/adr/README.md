@@ -1,0 +1,1 @@
+Here we store all architecture decision records made during application desing process
