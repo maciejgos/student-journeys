@@ -7,6 +7,8 @@ As an institution handling student data, we need secure access and data protecti
 ## Acceptance criteria
 
 - Users must authenticate before accessing the system.
-- Sensitive data is protected in transit and at rest.
-- Access rules are enforced consistently across UI, API, and export paths.
-- Document access honors role-based restrictions for sensitive files.
+- Role and scope-based access rules are enforced consistently across UI behavior, API behavior, search results, exports, reports, and document access.
+- Sensitive data is protected in transit and at rest using platform-approved controls.
+- Authentication and access failures are logged for operational investigation without exposing sensitive data to unauthorized users.
+- Sensitive document access honors the role-based restrictions defined in document handling and RBAC features.
+- The first release must not expose student data through anonymous access, unrestricted export, or unrestricted file download paths.
