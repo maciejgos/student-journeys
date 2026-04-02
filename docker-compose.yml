@@ -1,0 +1,16 @@
+services:
+  workspace:
+    image: mcr.microsoft.com/playwright:v1.59.0-noble
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - student_journeys_node_modules:/workspace/node_modules
+    command: sleep infinity
+    ports:
+      - "4173:4173"
+      - "8787:8787"
+      - "5173:5173"
+      - "9323:9323"
+
+volumes:
+  student_journeys_node_modules:
