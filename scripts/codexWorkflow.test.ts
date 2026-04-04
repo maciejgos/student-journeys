@@ -8,6 +8,7 @@ import {
   branchNameForFeature,
   cleanupGeneratedArtifacts,
   collectChangedFiles,
+  currentBranchName,
   extractIssueNumberFromBranchName,
   nextSequenceNumber,
   parseSuites,
@@ -122,6 +123,18 @@ describe('codex workflow automation', () => {
     expect(summary).toContain('Closes #42');
     expect(summary).toContain('Workflow automation');
     expect(summary).toContain('npm run build');
+  });
+
+  it('reports the current branch name from git', () => {
+    writeFileSync(join(tempDir, 'README.md'), '# Temp repo', 'utf8');
+    execSync('git init', { cwd: tempDir, stdio: 'ignore' });
+    execSync('git config user.email "codex@example.com"', { cwd: tempDir, stdio: 'ignore' });
+    execSync('git config user.name "Codex"', { cwd: tempDir, stdio: 'ignore' });
+    execSync('git add .', { cwd: tempDir, stdio: 'ignore' });
+    execSync('git commit -m "init"', { cwd: tempDir, stdio: 'ignore' });
+    execSync('git checkout -b codex/issue-42-sample', { cwd: tempDir, stdio: 'ignore' });
+
+    expect(currentBranchName(tempDir)).toBe('codex/issue-42-sample');
   });
 
   it('validates pull request metadata', () => {

@@ -332,7 +332,17 @@ function runCommand(
 }
 
 function ensureBranchExists(rootDir: string, branchName: string): void {
-  runCommand(rootDir, ['git', 'checkout', '-b', branchName], { stdio: 'inherit' });
+  if (currentBranchName(rootDir) === branchName) {
+    return;
+  }
+
+  const branchExists = runCommand(rootDir, ['git', 'rev-parse', '--verify', branchName], {
+    allowFailure: true,
+  }).status === 0;
+
+  runCommand(rootDir, ['git', 'checkout', ...(branchExists ? [branchName] : ['-b', branchName])], {
+    stdio: 'inherit',
+  });
 }
 
 function gitOutput(rootDir: string, command: string[], fallback = ''): string {
