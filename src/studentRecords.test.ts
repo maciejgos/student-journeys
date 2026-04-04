@@ -10,6 +10,7 @@ import {
   summarizeRecord,
   trimRecordInput,
   validateStudentRecordInput,
+  supportedPrimaryJourneyStages,
 } from './studentRecords';
 
 describe('student record domain', () => {
@@ -32,6 +33,23 @@ describe('student record domain', () => {
       firstName: 'First name or preferred name is required.',
       lastName: 'Last name is required.',
       studentId: 'Provide at least one student, application, email, or phone identifier.',
+    });
+  });
+
+  it('rejects unsupported journey stages and keeps at-risk outside the primary stage catalog', () => {
+    expect(supportedPrimaryJourneyStages).not.toContain('At-risk student');
+
+    expect(
+      validateStudentRecordInput({
+        ...defaultStudentRecordInput(),
+        firstName: 'Alice',
+        lastName: 'Walker',
+        campus: 'North Campus',
+        email: 'alice.walker@example.edu',
+        currentJourneyStage: 'At-risk student',
+      }),
+    ).toEqual({
+      currentJourneyStage: 'Select a supported journey stage.',
     });
   });
 

@@ -126,4 +126,26 @@ describe('student records api', () => {
       summary: 'Updated fields: program.',
     });
   });
+
+  it('rejects unsupported current journey stages through the api', async () => {
+    const response = await app.request('/api/student-records/student_alice_walker', {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json',
+        'x-user-role': 'worker',
+      },
+      body: JSON.stringify({
+        patch: {
+          currentJourneyStage: 'At-risk student',
+        },
+      }),
+    });
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      errors: {
+        currentJourneyStage: 'Select a supported journey stage.',
+      },
+    });
+  });
 });

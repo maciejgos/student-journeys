@@ -1,6 +1,21 @@
 export type UserRole = 'worker' | 'teamLead' | 'administrator';
 export type RecordVisibility = 'standard' | 'restricted';
 
+export const supportedPrimaryJourneyStages = [
+  'Prospect or inquiry',
+  'Applicant',
+  'Admitted',
+  'Enrolled',
+  'Active student',
+  'Deferred',
+  'Withdrawn',
+  'Inactive student',
+  'Graduated student',
+  'Alumni handoff',
+] as const;
+
+export type JourneyStage = (typeof supportedPrimaryJourneyStages)[number];
+
 export type StudentRecordInput = {
   firstName: string;
   preferredName: string;
@@ -189,6 +204,10 @@ export const validateStudentRecordInput = (input: StudentRecordInput): Validatio
     errors.studentId = 'Provide at least one student, application, email, or phone identifier.';
   }
 
+  if (!supportedPrimaryJourneyStages.includes(input.currentJourneyStage as JourneyStage)) {
+    errors.currentJourneyStage = 'Select a supported journey stage.';
+  }
+
   return errors;
 };
 
@@ -310,4 +329,8 @@ export const fieldLabels: Record<keyof StudentRecordInput, string> = {
   withdrawalDate: 'Withdrawal date',
   graduationDate: 'Graduation date',
   alumniHandoffDate: 'Alumni handoff date',
+};
+
+export const fieldOptions: Partial<Record<keyof StudentRecordInput, readonly string[]>> = {
+  currentJourneyStage: supportedPrimaryJourneyStages,
 };
