@@ -52,12 +52,14 @@ Automated tests are present and should be updated with code changes.
 
 - Add or update unit tests near the code under test in `src/`.
 - Keep browser workflow coverage in `tests/e2e/`.
+- Execute the relevant automated tests after each feature implementation before moving on to the next feature.
 - Run the smallest relevant test command while iterating, then run the broader affected suite before finishing.
 - If you add behavior without automated coverage, explain the gap in the change summary.
 
 ## Architecture Decisions
 
 - Record notable technical decisions in `docs/adr/`. Each ADR should state status, context, decision, and consequences.
+- Document your decisions in an ADR whenever the work introduces or changes an architectural, integration, security, persistence, or operational choice that should be preserved for future contributors.
 - Create or update an ADR in the same piece of work for major changes to system boundaries, deployment model, data model strategy, security model, integration patterns, or core framework choices.
 
 ## Feature Specifications
@@ -80,6 +82,12 @@ Pull requests should:
 
 This project handles student-administration workflows, so avoid committing real student data, secrets, or environment-specific credentials. Use sanitized examples only. Treat files under `.data/` as local development state unless a task explicitly requires fixture updates.
 Do not commit generated outputs from `dist/`, `test-results/`, `playwright-report/`, `node_modules/`, or `*.tsbuildinfo`.
+
+## Environment cleanup
+
+- Clean up the local environment after completing implementation work.
+- Stop temporary development processes, remove transient test or build artifacts that should not persist, and leave the workspace ready for the next task.
+- Do not delete user data, committed assets, or intentionally preserved local fixtures unless the task explicitly requires it.
 
 ## ExecPlans
 
