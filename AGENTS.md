@@ -9,9 +9,13 @@ This repository contains both product documentation in `docs/` and a working app
 - `docs/architecture.md`: architecture notes and system design decisions.
 - `docs/adr/`: architecture decision records and the ADR template.
 - `docs/features/`: feature specifications with user stories and acceptance criteria.
+- `docs/pr-assets/`: screenshots and other assets referenced by pull requests or documentation.
 - `src/`: React frontend, student-record domain logic, and Hono server code.
+- `src/server/`: Hono application, local development server entrypoint, and persistence layer.
 - `tests/e2e/`: Playwright end-to-end coverage.
 - `.data/`: local development database files; do not commit real data.
+- `dist/`, `test-results/`, and `playwright-report/`: generated build and test artifacts; do not edit or commit them.
+- `docker-compose.yml`, `.devcontainer/`, `vite.config.ts`, `playwright.config.ts`, and `tsconfig*.json`: local development and tooling configuration.
 
 Organize new application code by feature or domain inside `src/`. Keep browser UI code and server code separated by responsibility. Place unit tests close to the code they verify, for example `src/studentRecords.test.ts` or `src/server/app.test.ts`. Keep end-to-end coverage in `tests/e2e/`.
 
@@ -20,13 +24,15 @@ Organize new application code by feature or domain inside `src/`. Keep browser U
 Use the existing npm scripts as the source of truth.
 
 - `npm run dev`: run the Vite frontend and Hono API together.
+- `npm run dev:api`: run the Hono API in watch mode.
+- `npm run dev:web`: run the Vite frontend dev server.
 - `npm run build`: type-check the app and server entrypoints, then build the frontend bundle.
 - `npm run preview`: serve the production frontend build locally.
 - `npm run test:unit`: run Vitest unit tests.
 - `npm run test:e2e`: run Playwright end-to-end tests.
 - `npm test`: run both unit and end-to-end suites.
 
-Docker Desktop workflow is also available through `docker compose run --rm workspace ...` when you want to run the project in the provided Playwright container.
+Docker Desktop workflow is also available through `docker compose run --rm workspace ...` when you want to run the project in the provided Playwright container. Use `docker compose run --rm --service-ports workspace npm run dev` when the frontend and API both need to be reachable from the container.
 
 ## Coding Style & Naming Conventions
 
@@ -73,6 +79,7 @@ Pull requests should:
 ## Security Notes
 
 This project handles student-administration workflows, so avoid committing real student data, secrets, or environment-specific credentials. Use sanitized examples only. Treat files under `.data/` as local development state unless a task explicitly requires fixture updates.
+Do not commit generated outputs from `dist/`, `test-results/`, `playwright-report/`, `node_modules/`, or `*.tsbuildinfo`.
 
 ## ExecPlans
 
