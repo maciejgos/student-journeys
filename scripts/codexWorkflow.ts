@@ -129,6 +129,19 @@ export function renderFeatureSpec(params: {
     : '- Related ExecPlan: create one if implementation becomes significant';
   const relatedIssue = params.issueNumber ? `- GitHub Issue: #${params.issueNumber}` : '- GitHub Issue: create or link one before opening the PR';
   const relatedBranch = params.branchName ? `- Suggested branch: \`${params.branchName}\`` : '- Suggested branch: generate one from the feature title';
+  const recommendedFlow = [
+    '- Recommended Codex skill flow:',
+    '  - `delivery-orchestrator`',
+    '  - `intake-orchestrator`',
+    '  - `business-reviewer` when the scope or acceptance criteria need refinement',
+    '  - `ux-concept-designer` for user-facing work',
+    '  - `architecture-reviewer` when long-lived technical choices are involved',
+    '  - `execplan-runner`',
+    '  - `implementation-orchestrator`',
+    '  - `ux-reviewer` for user-facing work',
+    '  - `verification-operator`',
+    '  - `pr-preparer`',
+  ].join('\n');
 
   return `# ${formatSequenceNumber(params.featureNumber)} ${params.title}
 
@@ -162,6 +175,7 @@ ${relatedIssue}
 ${relatedBranch}
 ${relatedAdr}
 ${relatedExecPlan}
+${recommendedFlow}
 `;
 }
 
@@ -202,6 +216,18 @@ export function renderExecPlan(params: { title: string; featurePath: string; adr
   const adrReference = params.adrPath
     ? `The related architecture decision record is \`${params.adrPath}\`. Update it whenever the plan changes the long-lived technical approach.\n`
     : '';
+  const stageReferences = [
+    'Use the repository AI-native delivery flow as the default orchestration model:',
+    '',
+    '- `delivery-orchestrator` for stage selection and artifact order',
+    '- `intake-orchestrator` for initial scaffolding and issue linkage',
+    '- `business-reviewer` and `architecture-reviewer` for specialist review gates when needed',
+    '- `ux-concept-designer` before implementing user-facing changes',
+    '- `implementation-orchestrator` for code and documentation execution',
+    '- `ux-reviewer` before handoff for user-facing changes',
+    '- `verification-operator` for checkpoint and finish validation',
+    '- `pr-preparer` for review handoff',
+  ].join('\n');
 
   return `# ${params.title}
 
@@ -209,6 +235,8 @@ This ExecPlan is a living document. The sections \`Progress\`, \`Surprises & Dis
 
 This document must be maintained in accordance with \`.codex/PLANS.md\`.
 ${adrReference}
+${stageReferences}
+
 ## Purpose / Big Picture
 
 Explain what someone can do after this change that they could not do before, and how to observe it working in this repository.

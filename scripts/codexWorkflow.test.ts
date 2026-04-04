@@ -72,7 +72,11 @@ describe('codex workflow automation', () => {
 
     expect(readTextFile(join(tempDir, artifacts.featurePath))).toContain('GitHub Issue: #42');
     expect(readTextFile(join(tempDir, artifacts.featurePath))).toContain('Related ADR: `docs/adr/0002-codex-lifecycle-automation.md`');
+    expect(readTextFile(join(tempDir, artifacts.featurePath))).toContain('`delivery-orchestrator`');
+    expect(readTextFile(join(tempDir, artifacts.featurePath))).toContain('`ux-concept-designer` for user-facing work');
     expect(readTextFile(join(tempDir, artifacts.execPlanPath!))).toContain('This document must be maintained in accordance with `.codex/PLANS.md`.');
+    expect(readTextFile(join(tempDir, artifacts.execPlanPath!))).toContain('`implementation-orchestrator` for code and documentation execution');
+    expect(readTextFile(join(tempDir, artifacts.execPlanPath!))).toContain('`ux-reviewer` before handoff for user-facing changes');
     expect(readTextFile(join(tempDir, 'docs/features/README.md'))).toContain('02-codex-lifecycle-automation.md');
   });
 

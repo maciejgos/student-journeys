@@ -1,6 +1,6 @@
 Feature specifications in this directory expand the requirements into implementation-ready scopes.
 
-Use [TEMPLATE.md](./TEMPLATE.md) for new entries or run `npm run codex:feature:start -- --title "Feature title"` to generate the feature, ADR, and ExecPlan scaffolding automatically.
+Use [TEMPLATE.md](./TEMPLATE.md) for new entries or run `npm run codex:feature:start -- --title "Feature title"` to generate the feature, ADR, and ExecPlan scaffolding automatically. The generated documents are intended to feed the AI-native workflow documented in `docs/ai-native-sdlc-pdlc.md`.
 
 Current feature documents:
 

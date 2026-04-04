@@ -19,6 +19,11 @@ After this change, a contributor can start a new feature with one command, get t
 - [x] 2026-04-04 09:12Z Validated the feature with containerized unit, build, and e2e runs, then removed generated artifacts from the workspace.
 - [x] 2026-04-04 09:35Z Extended the workflow with issue-linked branch naming, PR summary generation, GitHub templates, and CI metadata validation.
 - [x] 2026-04-04 09:36Z Ran the updated validation suite for the GitHub integration changes, smoke-tested PR summary generation, and cleaned transient artifacts again.
+- [x] 2026-04-04 11:52Z Created a dedicated implementation branch for the AI-native SDLC/PDLC upgrade and re-read `.codex/PLANS.md`, the feature spec, ADR, and current workflow code before editing.
+- [x] 2026-04-04 12:05Z Extended the workflow from CLI-only automation into a layered Codex process with stage skills, shared references, and visual delivery maps.
+- [x] 2026-04-04 12:08Z Updated scaffolding templates and repository docs so newly started work points to the AI-native process and artifacts.
+- [x] 2026-04-04 12:22Z Ran targeted unit and build validation, then removed transient artifacts from the workspace with `codex:checkpoint`.
+- [x] 2026-04-04 12:40Z Added explicit UI and UX concept plus UI and UX review stages, including dedicated skills and design documentation for user-facing work.
 
 ## Surprises & Discoveries
 
@@ -36,6 +41,15 @@ After this change, a contributor can start a new feature with one command, get t
 
 - Observation: branch-link enforcement is safest when CI checks consistency between an issue-linked branch and the PR body, rather than hard-failing every branch that lacks an issue number.
   Evidence: the active implementation branch `codex/sdlc-pdlc-automation` predates the new naming convention, so a strict branch-only rule would reject legitimate in-flight work.
+
+- Observation: the repository already contains the mechanical lifecycle pieces, so the missing layer is process orchestration rather than more shell automation.
+  Evidence: `scripts/codexWorkflow.ts` already supports feature intake, checkpoints, finish validation, and PR summary generation, but `.codex/skills/` only contains review-oriented skills.
+
+- Observation: containerized builds can still fail until optional Rollup binaries are refreshed inside the workspace image.
+  Evidence: `docker compose run --rm workspace npm run build` first failed with `Cannot find module @rollup/rollup-linux-arm64-gnu`, then passed after `docker compose run --rm workspace npm install`.
+
+- Observation: the original stage map was still too engineering-centric for frontend work because it assumed design decisions would emerge during implementation.
+  Evidence: the first AI-native workflow version had business and architecture review stages, but no dedicated UI and UX concept or review step.
 
 ## Decision Log
 
@@ -55,18 +69,30 @@ After this change, a contributor can start a new feature with one command, get t
   Rationale: keeping the collaboration rules in version control makes the automation visible, reviewable, and portable with the codebase.
   Date/Author: 2026-04-04 / Codex
 
+- Decision: implement the AI-native workflow as a process layer above the existing CLI, using stage skills plus shared references instead of replacing the current commands.
+  Rationale: the CLI already handles deterministic scaffolding and validation well, while skills are the right place to encode stage ownership, handoff rules, and subagent usage.
+  Date/Author: 2026-04-04 / Codex
+
+- Decision: reuse the existing `business-reviewer` and `architecture-reviewer` skills as specialist review gates instead of creating duplicate stage-specific review skills.
+  Rationale: the repo already has those review concepts encoded, so the new orchestrator should compose them rather than fragment responsibility further.
+  Date/Author: 2026-04-04 / Codex
+
+- Decision: add explicit `ux-concept-designer` and `ux-reviewer` stages to the workflow instead of folding design into implementation.
+  Rationale: user-facing work needs a pre-build design pass and a post-build experience review, and those checks are distinct from product analysis, architecture review, or code validation.
+  Date/Author: 2026-04-04 / Codex
+
 ## Outcomes & Retrospective
 
-The automation now covers the repetitive lifecycle mechanics that were previously manual. Contributors can scaffold delivery artifacts with one command, validate implementation checkpoints more consistently, clean generated artifacts without hand-curating the cleanup list each time, and carry the work into GitHub with issue templates, branch naming guidance, PR summaries, metadata checks, and CI.
+The automation now covers both the repetitive lifecycle mechanics and the AI-native process layer above them. Contributors can scaffold delivery artifacts with one command, route work through explicit Codex stage skills, use subagents only where bounded parallel work helps, validate implementation checkpoints more consistently, clean generated artifacts without hand-curating the cleanup list each time, and carry the work into GitHub with issue templates, branch naming guidance, PR summaries, metadata checks, and CI.
 
 Validation results for this implementation were:
 
-- `docker compose run --rm workspace npm run test:unit` passed with 3 test files and 19 tests.
-- `docker compose run --rm workspace npm run build` passed after ensuring container dependencies were installed.
-- `docker compose run --rm workspace npm run test:e2e` passed with 4 Playwright tests.
-- `docker compose run --rm workspace npm run codex:pr:summary -- --base main --output .codex/tmp/pr-summary.md` wrote a PR summary draft successfully.
+- `docker compose run --rm workspace npm run test:unit` passed with 3 test files and 20 tests.
+- `docker compose run --rm workspace npm install` refreshed missing optional build dependencies in the container.
+- `docker compose run --rm workspace npm run build` passed after the container dependency refresh.
+- `docker compose run --rm workspace npm run codex:checkpoint -- --suites unit,build` passed and removed `dist` plus `tsconfig.node.tsbuildinfo`.
 
-The remaining gap is direct GitHub API-backed issue or pull request creation from the CLI, which can be layered on later without changing the local workflow contract.
+The remaining gap is direct GitHub API-backed issue or pull request creation from the CLI, which can be layered on later without changing the local workflow contract. A second future extension could add dedicated feedback-closure skills once review-loop automation becomes a frequent task in this repository.
 
 ## Context and Orientation
 
@@ -76,19 +102,19 @@ The new implementation centers on `scripts/codexWorkflow.ts`, which adds a comma
 
 ## Plan of Work
 
-Add a repository-local workflow CLI that can create feature documents and run validation suites. The CLI should inspect `docs/features/` and `docs/adr/` to determine the next sequence numbers, create new Markdown files with useful starter content, and refresh the feature index so the generated artifacts become visible immediately.
+Keep the existing repository-local workflow CLI as the deterministic automation surface for scaffolding, validation, cleanup, and PR summary generation. Extend its generated templates so every new feature scaffold points contributors toward the stage-based Codex process and its expected repository artifacts.
 
-Extend the same CLI with two validation-oriented commands. One should support small checkpoint validation after each implementation slice, and the other should support broader finishing validation. Both commands should optionally remove transient build and test artifacts so the environment is left clean for the next task.
+Add a small set of project-local skills under `.codex/skills/` for orchestration, intake, ExecPlan maintenance, implementation, verification, and PR preparation. These skills should explain when to call the existing workflow commands, when to invoke the existing review skills, and when bounded subagents are appropriate.
 
-Add tests for the file-sequencing, scaffolding, suite parsing, and cleanup behavior. Update documentation so contributors know when to use the new commands and why they exist.
+Add shared lifecycle references and a dedicated documentation page with Mermaid diagrams so the process is visible outside the skill files. Update `README.md`, `docs/architecture.md`, the feature spec, and the ADR so the repo consistently describes the workflow as a layered model: skills for process, subagents for parallel execution, CLI commands for deterministic mechanics.
 
 ## Concrete Steps
 
 Run these commands from the repository root:
 
     npm run codex:feature:start -- --title "Example feature"
-    npm run codex:checkpoint -- --suites unit,build
-    npm run codex:finish
+    npm run test:unit -- scripts/codexWorkflow.test.ts
+    npm run build
 
 Expected evidence:
 
@@ -97,11 +123,11 @@ Expected evidence:
     - ADR: docs/adr/NNNN-example-feature.md
     - ExecPlan: docs/execplans/example-feature.md
 
-The checkpoint and finish commands should stream the underlying npm validation output and end with a cleanup message describing removed transient artifacts or stating that none were present.
+The generated feature spec and ExecPlan should include references to the AI-native stage flow. The documentation should render Mermaid diagrams for the stage map and the skill-to-subagent execution model. Targeted tests should confirm that new scaffolds include the expected process guidance.
 
 ## Validation and Acceptance
 
-Run `npm run test:unit` and expect the new workflow unit tests to pass alongside the existing student-record tests. Run `npm run build` and expect the Node-side workflow script to type-check with the existing application code. Run `npm run codex:checkpoint -- --suites unit,build` and expect unit tests and the build to succeed, followed by cleanup of generated artifacts. The final acceptance condition is that the repository documents the workflow and the generated artifacts for this feature exist in `docs/features/`, `docs/adr/`, and `docs/execplans/`.
+Run `npm run test:unit` and expect the workflow unit tests to pass alongside the existing application tests. Run `npm run build` and expect the Node-side workflow script and the documentation-linked TypeScript code to type-check with the rest of the project. Acceptance requires three visible outcomes: the repository contains reusable stage skills under `.codex/skills/`, the documentation contains a visual AI-native SDLC/PDLC map, and newly generated scaffolds include the orchestration guidance that points contributors to the new process.
 
 ## Idempotence and Recovery
 
@@ -115,6 +141,14 @@ Important files introduced by this plan:
 
     scripts/codexWorkflow.ts
     scripts/codexWorkflow.test.ts
+    .codex/skills/delivery-orchestrator/SKILL.md
+    .codex/skills/intake-orchestrator/SKILL.md
+    .codex/skills/execplan-runner/SKILL.md
+    .codex/skills/implementation-orchestrator/SKILL.md
+    .codex/skills/verification-operator/SKILL.md
+    .codex/skills/pr-preparer/SKILL.md
+    .codex/skills/shared/references/lifecycle-map.md
+    docs/ai-native-sdlc-pdlc.md
     docs/features/19-codex-sdlc-pdlc-automation.md
     docs/adr/0002-codex-sdlc-pdlc-lifecycle-automation.md
     docs/execplans/codex-sdlc-pdlc-automation.md
@@ -128,3 +162,5 @@ The workflow CLI depends on the existing `tsx` runtime, Node.js filesystem and c
     npm run codex:finish
 
 These commands are the contract future contributors should preserve even if the underlying implementation changes.
+
+Revision note: 2026-04-04 / Codex. Expanded the plan from CLI-focused automation into an AI-native workflow implementation so the living plan matches the newly requested skills, subagent usage, and visual process documentation.

@@ -23,7 +23,9 @@ The project needs a lightweight automation layer that keeps those practices clos
 
 ## Decision
 
-Adopt a repository-local Codex workflow CLI in `scripts/codexWorkflow.ts` and expose it through npm scripts.
+Adopt a layered repository-local Codex workflow.
+
+The deterministic automation surface remains a workflow CLI in `scripts/codexWorkflow.ts` exposed through npm scripts. On top of that, the repository now adds stage skills under `.codex/skills/` so Codex can execute intake, planning, UI and UX design, implementation, UX review, verification, and PR preparation as explicit delivery stages. Bounded subagents are allowed inside a stage for parallel exploration or implementation, but stage ownership stays with the main agent.
 
 The lifecycle workflow provides five commands:
 
@@ -33,7 +35,7 @@ The lifecycle workflow provides five commands:
 - `npm run codex:pr:summary` generates a PR summary draft on demand.
 - `npm run codex:pr:validate` checks branch and PR metadata for CI.
 
-The repository also adds GitHub issue templates, a pull request template, and a GitHub Actions workflow so that issue intake, PR formatting, metadata checks, unit tests, build verification, and Playwright e2e coverage all run in a consistent GitHub-native path.
+The repository also adds project-local skills, shared lifecycle references, visual workflow documentation, GitHub issue templates, a pull request template, and a GitHub Actions workflow so that issue intake, planning, implementation, PR formatting, metadata checks, unit tests, build verification, and Playwright e2e coverage all run in a consistent GitHub-native path.
 
 This approach keeps the automation:
 
@@ -49,12 +51,16 @@ This approach keeps the automation:
 - Reduces the friction of following the repository’s intended lifecycle process.
 - Makes feature intake, architectural documentation, and implementation planning more consistent.
 - Creates a stronger bridge between local delivery automation and GitHub collaboration.
+- Gives Codex a repository-native process model instead of leaving stage behavior implicit in prompts.
+- Creates an explicit design lane so user-facing work is shaped and reviewed before handoff.
+- Makes it clear where subagents help and where the main agent must keep control.
 - Encourages disciplined validation and workspace cleanup.
 - Keeps workflow rules visible in code and documentation instead of hidden in tribal knowledge.
 
 ### Negative
 
 - Adds a small amount of maintenance overhead for the automation script and tests.
+- Adds maintenance overhead for the stage skills and workflow documentation.
 - The workflow still depends on contributors filling in the generated documents with meaningful content.
 - GitHub collaboration still depends on repository permissions and authenticated clients outside the repository code itself.
 
