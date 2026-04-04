@@ -57,7 +57,13 @@ test('updates selected fields without overwriting unrelated data', async ({ page
   await page.goto('/');
 
   await page.getByTestId('search-input').fill('Alice');
-  await page.getByRole('button', { name: 'Open record' }).click();
+  const aliceResult = page
+    .getByTestId('search-results')
+    .getByRole('listitem')
+    .filter({ hasText: 'Alice Walker' })
+    .first();
+  await expect(aliceResult).toContainText('alice.walker@example.edu');
+  await aliceResult.getByRole('button', { name: 'Open record' }).click();
 
   await expect(page.getByTestId('record-summary')).toContainText('Alice Walker');
   await expect(page.getByTestId('edit-email')).toHaveValue('alice.walker@example.edu');

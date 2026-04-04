@@ -1,6 +1,6 @@
 Feature specifications in this directory expand the requirements into implementation-ready scopes.
 
-Use [TEMPLATE.md](./TEMPLATE.md) for new entries.
+Use [TEMPLATE.md](./TEMPLATE.md) for new entries or run `npm run codex:feature:start -- --title "Feature title"` to generate the feature, ADR, and ExecPlan scaffolding automatically.
 
 Current feature documents:
 
@@ -22,3 +22,4 @@ Current feature documents:
 - `16-security.md`
 - `17-reliability.md`
 - `18-scalability.md`
+- `19-codex-sdlc-pdlc-automation.md`

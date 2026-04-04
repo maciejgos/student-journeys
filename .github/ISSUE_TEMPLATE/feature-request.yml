@@ -1,0 +1,38 @@
+name: Feature request
+description: Capture a new delivery item that should flow through the Codex lifecycle automation.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: Describe the pain point or opportunity.
+      placeholder: What is not working well today?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe what success looks like.
+      placeholder: What should a user or contributor be able to do after this work?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List the behaviors that should be true when this issue is complete.
+      placeholder: |
+        - 
+        - 
+    validations:
+      required: true
+  - type: textarea
+    id: docs
+    attributes:
+      label: Related documentation
+      description: Link requirements, feature specs, ADRs, or ExecPlans if they already exist.
+      placeholder: docs/features/... docs/adr/... docs/execplans/...
