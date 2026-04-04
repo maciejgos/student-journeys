@@ -49,3 +49,13 @@ The initial scope focuses on student records, stage tracking, tasks, cases, inte
 - `docs/adr/`: architecture decision records
 - `docs/features/`: feature specifications and templates
 - `src/`: future application source code
+
+## Development commands
+
+This repository now includes a frontend application, a Hono API, local relational persistence for development, unit tests, Playwright e2e tests, and a Docker/devcontainer workflow.
+
+- `docker compose run --rm workspace npm install`: install project dependencies inside Docker Desktop
+- `docker compose run --rm --service-ports workspace npm run dev`: run the frontend and API locally in Docker
+- `docker compose run --rm workspace npm run test:unit`: run unit tests
+- `docker compose run --rm workspace npm run test:e2e`: run Playwright e2e tests
+- `docker compose run --rm workspace npm run build`: verify the production build
