@@ -205,3 +205,26 @@ R2 stores:
 - Introduce read-optimized reporting patterns if dashboard demand outgrows direct D1 querying.
 - Split the Worker into smaller services only when team size, deployment cadence, or scaling patterns justify the cost.
 - Add stronger identity federation if campus SSO becomes a product requirement.
+
+## AI-native delivery architecture
+
+The repository itself now contains an AI-native SDLC and PDLC operating model for Codex-driven work. This does not change the runtime application architecture above. It defines how delivery work moves through repository artifacts and automation.
+
+- Skills act as the process control plane.
+- Subagents provide bounded parallel execution inside a stage.
+- The existing `npm run codex:*` commands are the deterministic execution layer.
+- User-facing work is expected to pass through an explicit UI and UX concept stage before implementation and a UI and UX review stage before final handoff.
+
+See [docs/ai-native-sdlc-pdlc.md](./ai-native-sdlc-pdlc.md) for the stage guide. The high-level control flow is:
+
+```mermaid
+flowchart TD
+    U[User request] --> O[Orchestrator skill]
+    O --> F[Feature and planning artifacts]
+    F --> I[Implementation stage]
+    I --> V[Validation stage]
+    V --> P[PR handoff]
+    O --> S[Specialist review skills]
+    I --> A[Optional subagents]
+    V --> C[npm run codex checkpoint or finish]
+```

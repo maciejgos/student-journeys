@@ -2,7 +2,7 @@
 
 ## Description
 
-Provide repository-native automation that helps Codex and human contributors move work from intake through planning, implementation, GitHub collaboration, validation, and cleanup with less manual coordination.
+Provide repository-native automation that helps Codex and human contributors move work from intake through planning, implementation, GitHub collaboration, validation, and cleanup with less manual coordination, while making Codex itself the primary operator of each delivery stage.
 
 ## Problem statement
 
@@ -26,6 +26,9 @@ Provide repository-native automation that helps Codex and human contributors mov
 - The workflow can suggest or create an issue-linked branch name.
 - A checkpoint command can run relevant validation suites after implementation milestones.
 - A finish command can run broader validation, remove transient build and test artifacts, and generate a PR summary draft.
+- Repository-local skills define the delivery stages Codex should execute.
+- The repository-native flow includes explicit UI and UX concept plus UI and UX review stages for user-facing work.
+- The workflow documentation includes a visual stage map and explains when subagents are allowed.
 - GitHub templates and CI validate pull request metadata plus unit, build, and e2e checks.
 - Repository documentation explains how to use the new lifecycle workflow.
 
