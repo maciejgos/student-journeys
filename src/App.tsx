@@ -10,6 +10,7 @@ import {
   canViewAuditLog,
   defaultStudentRecordInput,
   displayNameForRecord,
+  fieldOptions,
   fieldLabels,
   rolePermissions,
   studentRecordFieldGroups,
@@ -201,6 +202,37 @@ export default function App() {
     [selectedRecord],
   );
 
+  const renderFieldControl = (
+    mode: 'create' | 'edit',
+    field: keyof StudentRecordInput,
+    value: string,
+    onChange: (nextValue: string) => void,
+  ) => {
+    const options = fieldOptions[field];
+    const testId = `${mode}-${field}`;
+
+    if (options) {
+      return (
+        <select data-testid={testId} className={inputClassName} value={value} onChange={(event) => onChange(event.target.value)}>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    return (
+      <input
+        data-testid={testId}
+        className={inputClassName}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    );
+  };
+
   return (
     <div className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.12),transparent_24rem),radial-gradient(circle_at_bottom_right,rgba(34,197,94,0.10),transparent_26rem),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)] text-slate-900">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.025)_1px,transparent_1px)] bg-[size:72px_72px]" />
@@ -326,12 +358,7 @@ export default function App() {
                       {group.fields.map((field) => (
                         <label key={field} className="grid gap-2">
                           <span className="text-sm font-medium text-slate-100">{fieldLabels[field]}</span>
-                          <input
-                            data-testid={`create-${field}`}
-                            className={inputClassName}
-                            value={createDraft[field]}
-                            onChange={(event) => onCreateChange(field, event.target.value)}
-                          />
+                          {renderFieldControl('create', field, createDraft[field], (nextValue) => onCreateChange(field, nextValue))}
                           {errors[field] ? <strong className="text-sm font-medium text-rose-300">{errors[field]}</strong> : null}
                         </label>
                       ))}
@@ -543,12 +570,7 @@ export default function App() {
                         {group.fields.map((field) => (
                           <label key={field} className="grid gap-2">
                             <span className="text-sm font-medium text-slate-700">{fieldLabels[field]}</span>
-                            <input
-                              data-testid={`edit-${field}`}
-                              className={inputClassName}
-                              value={editDraft[field]}
-                              onChange={(event) => onEditChange(field, event.target.value)}
-                            />
+                            {renderFieldControl('edit', field, editDraft[field], (nextValue) => onEditChange(field, nextValue))}
                             {errors[field] ? <strong className="text-sm font-medium text-rose-700">{errors[field]}</strong> : null}
                           </label>
                         ))}
